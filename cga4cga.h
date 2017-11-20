@@ -10,13 +10,10 @@ MAIS102-UNJBG*/
 #include <stdlib.h>
 #include <time.h>
 #include <stdio.h>
-#include "schaffer.h"
+#include "cga.h"
 
 using namespace std;
-
-double cga(double V_MIN, double V_MAX, int T_POB, int N_GEN, double P_MUT, double P_CRU, int T_CRU);
-
-
+/*
 // estructura del individuo
 class ind
 {
@@ -28,7 +25,7 @@ class ind
 		void read_cro();
 		void inicializacion();
 		void mutacion(float P_MUT);
-		void evaluacion(double left, double right,int tipo);
+		void evaluacion(double left, double right);
 		void normalizacion();
 };
 
@@ -52,7 +49,7 @@ double ind::read_x(double left, double right, int var) //var=1 si x1 y var=2 si 
 	double sum=0;
 	for(int i=0+(var*(L_CRO/2));i<L_CRO/2+(var*(L_CRO/2));i++) //artificio para seleccionar la 1ra mitad si var=0 y 2da mitad si var=1
 	{
-		sum+=pow(2,i-(var*(L_CRO/2)))*cro[i];
+		sum+=pow(2,i-(var*(L_CRO)))*cro[i];
 	}
 	a=(right-left)/(pow(2,L_CRO/2)-1);
 	x=left+sum*a;
@@ -71,47 +68,23 @@ void ind::inicializacion()
 		cro[i]=rand()%2;
 }
 
-void ind::evaluacion(double left, double right,int tipo=1)
+void ind::evaluacion(double left, double right)
 {
 	x1=read_x(left,right,1);
 	x2=read_x(left,right,2);
-	if(tipo==2)
-		fit=cga(0,1,20,10,0.5,0.5,2);
-	else
-	{
-		fit=schaffer(x1,x2);
-	}
+	fit=cga(0,1,100,100,x1,x2,2);
 }
 
-/*
-	//t=0
-	//inicializar Gt
-	//decodificar Gt->Xt y evaluar Xt
-	//aplicar normalizacion lineal
-	mientras t<MaxGEN hacer
-		t=t+1
-		seleccionar Gt de Gt-1
-		guardar bbest=gbest € Gt-1
-		operar gt, formando Gt //cruce mutacion
-		aplicar elitismo bbest->Gt
-		evaluar Gt
-		ajustar aptitud
-	fin mientras
-
-	selecion: ruleta y elitismo
-	aptitud: normalizacion lineal con valores min max definidos
-
-	--parte de experimentos omitida
-
-*/
 
 void cruce(ind &padre,ind &madre, int T_CRU);
 
-double cga(double V_MIN, double V_MAX, int T_POB, int N_GEN, double P_MUT, double P_CRU, int T_CRU)
+*/
+
+void cga4cga(double V_MIN, double V_MAX, int T_POB, int N_GEN, double P_MUT, double P_CRU, int T_CRU)
 {
+
 	int t;
 	float ale;
-
 
 	ind pob[T_POB],ind_aux,best;
 	ind new_pob[T_POB];
@@ -126,7 +99,7 @@ double cga(double V_MIN, double V_MAX, int T_POB, int N_GEN, double P_MUT, doubl
 
 	//decodificacion y evaluacion
 	for(int i=0;i<T_POB;i++)
-		pob[i].evaluacion(V_MIN,V_MAX);
+		pob[i].evaluacion(V_MIN,V_MAX,2);
 
 	//normalizacion lineal
 	for(int i=1;i<T_POB;i++) //ordenamiento burbuja
@@ -168,8 +141,11 @@ double cga(double V_MIN, double V_MAX, int T_POB, int N_GEN, double P_MUT, doubl
 		//guardar bbest=gbest
 		best=pob[0];
 		for(int i=1;i<T_POB;i++)
-			if(best.fit<=pob[i].fit) //cambio para ver otros individuos
+			if(best.fit<=pob[i].fit) //cambio para ver otros parametros
 				best=pob[i];
+
+		cout<<best.x1<<","<<best.x2<<","<<best.fit<<endl;
+
 
 		//operar gt formando gt
 		for(int i=1;i<T_POB;i++)
@@ -202,7 +178,7 @@ double cga(double V_MIN, double V_MAX, int T_POB, int N_GEN, double P_MUT, doubl
 
 		//decodificacion y evaluacion
 		for(int i=0;i<T_POB;i++)
-			pob[i].evaluacion(V_MIN,V_MAX);
+			pob[i].evaluacion(V_MIN,V_MAX,2);
 
 		//normalizacion lineal
 		for(int i=1;i<T_POB;i++) //ordenamiento burbuja
@@ -217,12 +193,9 @@ double cga(double V_MIN, double V_MAX, int T_POB, int N_GEN, double P_MUT, doubl
 		for(int i=0;i<T_POB;i++)
 			pob[i].fit_nor=(float)(((float)(T_POB)/(T_POB-1))*i);
 	}
-	
-//	cout<<best.x1<<","<<best.x2<<",";
-	
-	return best.fit;
-}
 
+}
+/*
 void cruce(ind &padre,ind &madre,int T_CRU)
 {
 	unsigned int aux;
@@ -278,3 +251,4 @@ void cruce(ind &padre,ind &madre,int T_CRU)
 		}
 	}
 }
+*/
