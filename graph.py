@@ -6,7 +6,7 @@ from scipy.interpolate import griddata
 fig = plt.figure(figsize=plt.figaspect(0.5))
 ax = fig.add_subplot(1, 2, 1, projection='3d')
 # note this: you can skip rows!
-my_data = np.genfromtxt('josimar3', delimiter=',')
+my_data = np.genfromtxt('cga4cga.out', delimiter=',')
 X = my_data[:,0]
 Y = my_data[:,1]
 Z = my_data[:,2]
